@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
+      integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS"
+      crossorigin="anonymous"
+    />
+
+    <style>
+      html,
+      body {
+        height: 100%;
+        text-align: center;
+      }
+
+      body {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .form-login {
+        width: 100%;
+        max-width: 320px;
+        padding: 16px;
+        margin: auto;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="app">
+      <div class="container">
+        <form class="form-login" @submit.prevent="login">
+          <h1 class="h3 mb-3 font-weight-normal">
+            請先登入
+          </h1>
+          <div class="form-group">
+            <label for="email" class="sr-only">Email address</label>
+            <input
+              type="email"
+              id="email"
+              v-model="user.email"
+              class="form-control"
+              placeholder="Email address"
+              required
+              autofocus
+            />
+          </div>
+          <div class="form-group">
+            <label for="password" class="sr-only">Password</label>
+            <input
+              type="password"
+              id="password"
+              v-model="user.password"
+              class="form-control"
+              placeholder="Password"
+              required
+            />
+          </div>
+          <button type="submit" class="btn btn-lg btn-primary btn-block">
+            登入
+          </button>
+          <p class="mt-5 mb-3 text-muted">僅作學習使用，無商業用途</p>
+        </form>
+      </div>
+    </div>
+
+    <script
+      src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+      integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+      integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+      integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+    <script>
+        const apiUrl = 'https://course-ec-api.hexschool.io/api';
+        const UUID = '21acf264-850e-4f92-95d0-23bf823dd286';
+        
+      new Vue({
+          el: '#app',
+          data: {
+              user: {
+                  email: '',
+                  password: ''
+              },
+              token: ''
+          },
+          methods: {
+            login() {
+                const api = `${ apiUrl }/auth/login`;
+                axios.post(api, this.user).then((res) => {
+                    // console.log(res);
+                    const token = res.data.token;
+                    const expired = res.data.expired;
+
+                    // 寫入 cookie token
+                    // expires 設置有效時間
+                    document.cookie = `token = ${ token }; expired = ${ new Date(expired *1000)}; path: /`;
+                    // 將頁面導向至產品頁面
+                    window.location = 'products.html';
+                }).catch((err) => {
+                    // 顯示錯誤訊息
+                    console.log(err);
+                })
+            },
+          },
+      });
+    </script>
+  </body>
+</html>
